@@ -1,15 +1,13 @@
 {
-  "version": "1.0.0",
-  "name": "Cobblemon Pack",
+  "version": "1.0.1",
+  "name": "CobbleSaS",
   "minecraft_version": "1.21.1",
-  "fabric_loader_version": "0.16.9",
+  "fabric_loader_version": "0.19.2",
   "fabric_installer_version": "1.0.1",
   "changelog": [
-    "🎉 Lançamento inicial do modpack!",
-    "⚔️ Adicionado Cobblemon 1.6.1",
-    "🗺️ Biomes O' Plenty para paisagens épicas",
-    "🏠 Supplementaries para mais imersão",
-    "🔧 Otimizações de performance com Sodium e Lithium"
+    "[NOVO] Fabric Loader atualizado para 0.19.2",
+    "[FIX] Corrigida incompatibilidade de mods com Fabric antigo",
+    "[+] Cobblemon e mods atualizados"
   ],
   "download_url": "https://github.com/dennyun/CobbleSaS/releases/download/v1.0.0/modpack.zip"
 }
