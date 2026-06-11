@@ -27,6 +27,7 @@ jobs:
         run: npm run build:mac
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fazer Upload dos Arquivos (Artifacts)
         uses: actions/upload-artifact@v4
