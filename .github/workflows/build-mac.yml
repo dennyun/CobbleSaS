@@ -31,5 +31,5 @@ jobs:
         with:
           name: CobbleSaS-Launcher-macOS
           path: |
-            dist/*.dmg
-            dist/*mac*.zip
+            dist/Mac/*.dmg
+            dist/Mac/*.zip
