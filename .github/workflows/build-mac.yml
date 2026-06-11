@@ -1,0 +1,35 @@
+name: Build macOS
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checar o repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar Dependências
+        run: npm install
+
+      - name: Compilar para macOS (.dmg e .zip)
+        run: npm run build:mac
+
+      - name: Fazer Upload dos Arquivos (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: CobbleSaS-Launcher-macOS
+          path: |
+            dist/*.dmg
+            dist/*mac*.zip

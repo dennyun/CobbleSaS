@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://minotar.net; connect-src 'self' https://api.github.com https://github.com https://objects.githubusercontent.com https://api.mcsrvstat.us https://api.mcstatus.io;" />
+  <title>CobbleSaS Launcher</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Barra de título customizada -->
+  <div id="titlebar">
+    <div id="titlebar-drag">
+      <img src="../assets/icon.png" alt="CobbleSaS" id="titlebar-icon" onerror="this.style.display='none'" />
+      <span id="titlebar-name">CobbleSaS Launcher</span>
+    </div>
+    <div id="titlebar-buttons">
+      <button id="btn-minimize" title="Minimizar">&#8722;</button>
+      <button id="btn-close" title="Fechar">&#10005;</button>
+    </div>
+  </div>
+
+  <!-- ─── Overlay: Configurações (RAM, Resolução) ─────────────────────────── -->
+  <div id="settings-overlay" class="hidden">
+    <div id="settings-modal">
+      <h2 id="settings-modal-title">Configurações do Jogo</h2>
+      <p id="settings-modal-sub">Ajuste o desempenho e vídeo do seu Minecraft</p>
+
+      <div class="setting-row">
+        <label>Local de Instalação</label>
+        <div class="resolution-inputs" style="grid-template-columns: 1fr auto;">
+          <input type="text" id="install-path-input" readonly placeholder="Carregando..." style="width: 100%; text-align: left;" />
+          <button id="btn-change-path" style="padding: 10px; font-size: 14px;">Procurar</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>Caminho do Java (Opcional)</label>
+        <div class="resolution-inputs" style="grid-template-columns: 1fr auto;">
+          <input type="text" id="java-path-input" readonly placeholder="Usar Java padrão do Windows" style="width: 100%; text-align: left;" />
+          <button id="btn-change-java" style="padding: 10px; font-size: 14px;">Procurar</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>Resolução</label>
+        <div class="resolution-inputs">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="opacity:0.7"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
+          <input type="number" id="res-width" placeholder="854" />
+          <span>x</span>
+          <input type="number" id="res-height" placeholder="480" />
+          <label class="checkbox-container">
+            <input type="checkbox" id="res-fullscreen" />
+            <span class="checkmark"></span> Tela cheia
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label for="ram-select">Memória Máxima (RAM)</label>
+        <select id="ram-select">
+          <!-- Será preenchido via JavaScript dinamicamente -->
+          <option value="AUTO">AUTO</option>
+        </select>
+      </div>
+
+      <button id="btn-close-settings">Salvar e Fechar ✔</button>
+    </div>
+  </div>
+
+  <!-- ─── Overlay: Primeira Configuração (First-Time Setup) ───────────────── -->
+  <div id="setup-overlay" class="hidden">
+    <div id="settings-modal" style="text-align: center;">
+      <h2 id="settings-modal-title" style="margin-bottom: 10px;">Bem-vindo ao Launcher!</h2>
+      <p id="settings-modal-sub" style="margin-bottom: 20px;">Antes de baixar o jogo, onde você deseja instalá-lo?</p>
+
+      <div class="setting-row">
+        <div class="resolution-inputs" style="grid-template-columns: 1fr auto; max-width: 100%;">
+          <input type="text" id="setup-path-input" readonly style="width: 100%; text-align: left;" />
+          <button id="btn-setup-change-path" style="padding: 10px; font-size: 14px;">Mudar Pasta</button>
+        </div>
+      </div>
+
+      <button id="btn-finish-setup" style="margin-top: 20px;">Confirmar e Continuar ✔</button>
+    </div>
+  </div>
+
+  <!-- ─── Overlay: Tela de Loading (Estilo SKLauncher) ────────────────────── -->
+  <div id="download-overlay" class="hidden">
+    <div id="download-modal">
+      <img src="../assets/icon.png" alt="Icon" id="download-icon" style="width: 48px;" />
+      
+      <div id="download-progress-track">
+        <div id="download-progress-fill"></div>
+      </div>
+      
+      <div id="download-status-text">Preparando...</div>
+    </div>
+  </div>
+
+  <!-- Background decorativo -->
+  <div id="bg-overlay"></div>
+
+  <!-- Conteúdo principal -->
+  <main id="app">
+
+    <!-- Painel esquerdo: logo + info -->
+    <aside id="panel-left">
+      <div id="logo-container">
+        <img id="logo" src="../assets/icon.png" alt="Cobblemon" onerror="this.style.display='none'" />
+        <div id="logo-glow"></div>
+      </div>
+
+      <div id="server-info">
+        <h1 id="pack-name">Cobblemon Pack</h1>
+        <div id="version-badges">
+          <span class="badge badge-mc" id="badge-mc">MC 1.21.1</span>
+          <span class="badge badge-fabric" id="badge-fabric">Fabric</span>
+          <span class="badge badge-version" id="badge-pack">v--</span>
+        </div>
+        <p id="status-text">Verificando atualizações...</p>
+        <div id="auth-panel">
+          
+          <div id="auth-box">
+            <img id="user-avatar" src="https://minotar.net/helm/Steve/32.png" alt="Avatar" onerror="this.onerror=null; this.src='../assets/icon.png';" />
+            <input type="text" id="nickname-input" placeholder="Seu Nickname" maxlength="16" minlength="3" pattern="[a-zA-Z0-9_]+" title="Apenas letras, números e underlines. Sem espaços." list="recent-nicks" autocomplete="off" spellcheck="false" />
+            <datalist id="recent-nicks"></datalist>
+          </div>
+          
+          <button id="btn-settings" class="btn-panel-settings" title="Configurações (RAM & Vídeo)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.73 8.89c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            Configurações
+          </button>
+
+          <!-- Botões Sociais -->
+          <div id="social-buttons">
+            <a href="https://discord.gg/cobblesas" target="_blank" class="btn-social btn-discord" title="Comunidade no Discord">
+              <svg viewBox="0 0 127.14 96.36" width="20" height="20" fill="currentColor">
+                <path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.08 0A72.37 72.37 0 0 0 45.67 0a105.46 105.46 0 0 0-26.23 8.07C2.81 32.69-1.94 56.63.69 80.2a105.73 105.73 0 0 0 32.14 16.16 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.68 2a67.55 67.55 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-48.47-18.9-72.15zM42.79 65.43c-5.83 0-10.63-5.32-10.63-11.83s4.67-11.83 10.63-11.83c5.96 0 10.74 5.34 10.63 11.83 0 6.51-4.78 11.83-10.63 11.83zm41.56 0c-5.83 0-10.63-5.32-10.63-11.83s4.67-11.83 10.63-11.83c5.96 0 10.74 5.34 10.63 11.83 0 6.51-4.67 11.83-10.63 11.83z"/>
+              </svg>
+            </a>
+            <a href="https://loja.cobblesas.com.br/" target="_blank" class="btn-social btn-store" title="Loja Oficial">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M16 6V4a4 4 0 0 0-8 0v2H3v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6h-5zm-6-2a2 2 0 0 1 4 0v2h-4V4z"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+    <!-- Painel direito: changelog + ações -->
+    <section id="panel-right">
+
+      <!-- Changelog -->
+      <div id="changelog-box">
+        <h2 id="changelog-title">Novidades desta versão</h2>
+        <ul id="changelog-list">
+          <li class="skeleton">Carregando...</li>
+        </ul>
+      </div>
+
+      <!-- Status do Servidor -->
+      <div id="server-status-box" class="hidden">
+        <div id="status-indicator" class="dot-pulse"></div>
+        <div id="status-details">
+          <span id="status-title">Servidor CobbleSaS</span>
+          <span id="status-players">Buscando status...</span>
+        </div>
+      </div>
+
+      <!-- Botão principal -->
+      <div id="action-area">
+        <button id="btn-action" class="disabled" disabled>
+          <span id="btn-icon">⏳</span>
+          <span id="btn-text">Verificando...</span>
+        </button>
+        <button id="btn-repair" class="icon-btn" title="Reparar e verificar integridade da instalação">🛠️</button>
+        <button id="btn-mods-folder" class="icon-btn" title="Abrir pasta do jogo (.cobblesas)">📂</button>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

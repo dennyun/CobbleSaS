@@ -1,0 +1,59 @@
+name: Build Launcher
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout Código
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Instalar Dependências
+      run: npm install
+
+    - name: Compilar Windows
+      if: matrix.os == 'windows-latest'
+      run: npm run build:win
+
+    - name: Compilar Mac
+      if: matrix.os == 'macos-latest'
+      run: npm run build:mac
+
+    - name: Compilar Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: npm run build:linux
+
+    - name: Enviar Arquivo Windows (Artefato)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Launcher-Windows
+        path: dist/*.exe
+
+    - name: Enviar Arquivo Mac (Artefato)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Launcher-Mac
+        path: dist/*.dmg
+
+    - name: Enviar Arquivo Linux (Artefato)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Launcher-Linux
+        path: dist/*.AppImage
