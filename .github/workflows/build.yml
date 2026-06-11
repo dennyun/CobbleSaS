@@ -25,6 +25,10 @@ jobs:
     - name: Instalar Dependências
       run: npm install
 
+    - name: Criar pastas de saida
+      shell: bash
+      run: mkdir -p dist/Windows dist/Mac dist/Linux
+
     - name: Compilar Windows
       if: matrix.os == 'windows-latest'
       run: npm run build:win

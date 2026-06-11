@@ -23,6 +23,10 @@ jobs:
       - name: Instalar Dependências
         run: npm install
 
+      - name: Criar pastas de saida
+        shell: bash
+        run: mkdir -p dist/Windows dist/Mac dist/Linux
+
       - name: Compilar para macOS (.dmg e .zip)
         run: npm run build:mac
         env:
