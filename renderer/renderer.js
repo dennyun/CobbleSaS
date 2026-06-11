@@ -257,7 +257,13 @@ async function init() {
     if (result.error) { setStatus('Erro: ' + result.error, 'error'); setButtonDisabled('Sem conexão'); return; }
 
     currentManifest = result.manifest;
-    packName.textContent    = result.manifest.name || 'Cobblemon Pack';
+    packName.textContent    = result.manifest.name || 'CobbleSaS';
+    
+    // Atualiza Links Sociais Dinamicamente
+    const discordLink = document.getElementById('discord-link');
+    const storeLink = document.getElementById('store-link');
+    if (discordLink) discordLink.href = currentManifest.discord_url || 'https://discord.gg/cobblesas';
+    if (storeLink) storeLink.href = currentManifest.store_url || 'https://loja.cobblesas.com.br/';
     
     let displayVersion = result.manifest.version;
     if (result.action_state === 'update') displayVersion = result.localVersion;
