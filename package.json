@@ -29,7 +29,7 @@
         "dmg",
         "zip"
       ],
-      "icon": "assets/icon.icns",
+      "icon": "assets/icon.png",
       "artifactName": "Mac/${productName}-macOS-${version}.${ext}",
       "identity": null
     },
