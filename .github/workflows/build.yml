@@ -20,7 +20,7 @@ jobs:
     - name: Configurar Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: 24
 
     - name: Instalar Dependências
       run: npm install
@@ -32,6 +32,8 @@ jobs:
     - name: Compilar Mac
       if: matrix.os == 'macos-latest'
       run: npm run build:mac
+      env:
+        CSC_IDENTITY_AUTO_DISCOVERY: false
 
     - name: Compilar Linux
       if: matrix.os == 'ubuntu-latest'
@@ -42,18 +44,22 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Launcher-Windows
-        path: dist/*.exe
+        path: dist/Windows/*.exe
 
     - name: Enviar Arquivo Mac (Artefato)
       if: matrix.os == 'macos-latest'
       uses: actions/upload-artifact@v4
       with:
         name: Launcher-Mac
-        path: dist/*.dmg
+        path: |
+          dist/Mac/*.dmg
+          dist/Mac/*.zip
 
     - name: Enviar Arquivo Linux (Artefato)
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
         name: Launcher-Linux
-        path: dist/*.AppImage
+        path: |
+          dist/Linux/*.AppImage
+          dist/Linux/*.tar.gz
