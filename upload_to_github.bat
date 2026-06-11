@@ -24,17 +24,16 @@ git remote add origin https://github.com/dennyun/CobbleSaS.git
 echo [1/3] Detectando arquivos modificados...
 git add .
 
-:: Pega a data e hora do Windows para criar uma mensagem de historico bonitinha
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value') do set datetime=%%I
-set mydate=%datetime:~6,2%/%datetime:~4,2%/%datetime:~0,4%
-set mytime=%datetime:~8,2%:%datetime:~10,2%
+:: Pega a data e hora do Windows nativamente
+set mydate=%date%
+set mytime=%time:~0,5%
 
 echo [2/3] Salvando o historico (Commit)...
 git commit -m "Atualizacao do Launcher - %mydate% as %mytime%"
 
-:: Envia para os servidores da Microsoft/GitHub
+:: Envia para os servidores da Microsoft/GitHub (Forçando o envio inicial)
 echo [3/3] Enviando arquivos para a nuvem... (Isso pode demorar um pouco)
-git push -u origin main
+git push -u origin main --force
 
 echo.
 echo ========================================================
