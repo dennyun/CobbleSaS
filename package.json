@@ -31,9 +31,7 @@
       ],
       "icon": "assets/icon.icns",
       "artifactName": "Mac/${productName}-macOS-${version}.${ext}",
-      "identity": null,
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false
+      "identity": null
     },
     "linux": {
       "target": [
